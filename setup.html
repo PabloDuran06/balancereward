@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>BalanceReward — Setup base de datos</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css"></head><body><header class="topbar"><div class="container topbar-inner"><a class="brand" href="index.html"><span class="brand-mark"></span><span>BalanceReward<small>Autoconocimiento conductual</small></span></a><nav class="nav"><a href="index.html">Inicio</a><a href="demo.html">Demo</a><a href="funcionalidad.html">Funcionalidad</a><a href="setup.html" class="active">Setup BD</a></nav><a class="cta" href="index.html#registro">Ir al formulario</a></div></header><main><div class="container"><section class="section"><div class="panel section-card"><div class="section-head"><div><h2>Cómo conectarlo a Supabase</h2><p>Esta versión está preparada para guardar registros reales de waitlist con JavaScript usando Supabase. Solo tienes que crear un proyecto, una tabla y copiar dos claves públicas en el archivo de configuración.</p></div></div><div class="grid grid-2"><div class="setup-card"><span class="kicker">Paso 1</span><h3>Crea proyecto en Supabase</h3><p>Abre Supabase, crea un proyecto nuevo y copia tu <strong>Project URL</strong> y tu <strong>anon public key</strong>. El cliente de JavaScript de Supabase usa esas dos credenciales para conectar desde el frontend. [web:78]</p></div><div class="setup-card"><span class="kicker">Paso 2</span><h3>Crea la tabla</h3><p>En el SQL Editor ejecuta el script de abajo para crear una tabla de registros. Supabase permite crear tablas desde SQL o desde el panel. [web:72]</p><div class="code-block">create table public.waitlist_signups (
+  id bigint generated always as identity primary key,
+  created_at timestamptz default now() not null,
+  email text not null unique,
+  name text,
+  source text,
+  notes text
+);
+
+alter table public.waitlist_signups enable row level security;
+
+create policy "public_can_insert_waitlist"
+on public.waitlist_signups
+for insert
+to anon
+with check (true);</div></div><div class="setup-card"><span class="kicker">Paso 3</span><h3>Configura el archivo</h3><p>Rellena <code>supabase-config.js</code> con tu URL, tu anon key y el nombre de la tabla. Después súbelo junto al resto de archivos. Supabase inserta datos en JavaScript con <code>.from(...).insert(...)</code>. [web:65]</p><div class="code-block">window.WAITLIST_CONFIG = {
+  supabaseUrl: 'https://TU-PROYECTO.supabase.co',
+  supabaseAnonKey: 'TU_ANON_PUBLIC_KEY',
+  tableName: 'waitlist_signups'
+};</div></div><div class="setup-card"><span class="kicker">Paso 4</span><h3>Publica</h3><p>Sube también <code>supabase-config.js</code> al hosting junto con <code>index.html</code>, <code>styles.css</code> y <code>app.js</code>. Si quieres un formulario sin backend propio, este enfoque encaja muy bien en una web estática. [web:65][web:78]</p></div></div></div></section></div></main><footer class="footer"><div class="container"><div class="footer-grid"><div class="contact-card"><h3>Contacto</h3><p>hello@balancereward.app<br>Barcelona · España</p></div><div class="contact-card"><h3>Producto</h3><p>BalanceReward es una propuesta de autoconocimiento conductual enfocada en atención, regulación y hábitos.</p></div><div class="contact-card"><h3>Estado</h3><p>MVP conceptual preparado para demo pública, validación de narrativa y evolución hacia producto real.</p></div></div><small>BalanceReward presenta un índice conductual de autoconocimiento. No sustituye evaluación clínica ni afirma medir biomarcadores cerebrales.</small></div></footer><script src="app.js"></script></body></html>
